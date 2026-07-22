@@ -24,3 +24,10 @@ logic account for whether a project demonstrates testing practices.
 **Setup confirmation:** [x] App runs locally at localhost:5173
 
 **Cohort ledger:** [x] Issue added to cohort ledger
+
+**"Is this right for me?" checklist reasoning:**
+- Understanding: clear — add `has_tests` to analysis output based on `tests/`, `pytest.ini`, or `test_*.py`.
+- Scope note: issue names `agent/tools/repo_analyzer.py`, which doesn't exist. Real fit is `agent/tools/tech_detector.py` (already scans a `files` list the same way).
+- Tier: confirmed Tier 1 via GitHub labels; matches "first contribution" fit.
+- Codebase: read `tech_detector.py` and its 26-test suite — new logic/test slot in with the existing pattern.
+- Time/blockers: no assignees/comments/blockers on the issue; 2–4 hr estimate fits the Week 8–9 window.
