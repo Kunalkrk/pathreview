@@ -31,3 +31,15 @@ logic account for whether a project demonstrates testing practices.
 - Tier: confirmed Tier 1 via GitHub labels; matches "first contribution" fit.
 - Codebase: read `tech_detector.py` and its 26-test suite — new logic/test slot in with the existing pattern.
 - Time/blockers: no assignees/comments/blockers on the issue; 2–4 hr estimate fits the Week 8–9 window.
+
+## Week 8 — Reproduction & solution planning
+
+**Reproduction commit link:** https://github.com/Kunalkrk/pathreview/commit/2914f8ffb18b380721c2edc256d9f0c967b426e0
+
+**Reproduction summary:**
+Added a test in `tests/unit/test_tech_detector.py` calling `TechDetector.execute()` on files that clearly include `tests/`, `test_*.py`, and `pytest.ini`. The test fails: `has_tests` is not in the returned dict at all.
+
+**PLAN.md link:** https://github.com/Kunalkrk/pathreview/blob/feat/50-has-tests-boolean/PLAN.md
+
+**Blockers or open questions:**
+While fixing lint issues to get the reproduction test committed, found two pre-existing, unrelated test failures in the same file (`test_node_modules_excluded`, `test_build_directory_excluded`) — `_should_skip_file` doesn't match root-level `node_modules/`/`build/` paths (only nested ones). Not touching it for #50, but flagging in case it interacts with test-file detection.
