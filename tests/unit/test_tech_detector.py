@@ -361,10 +361,7 @@ class TestTechDetector:
         # Should detect C++ (from .cpp files)
 
     def test_has_tests_detection(self, detector: TechDetector) -> None:
-        """Reproduces #50: has_tests is missing from tech_detector output.
-
-        Expected to fail until has_tests detection is implemented.
-        """
+        """Test has_tests is True when tests/ files and pytest.ini are present (#50)."""
         files = [
             "main.py",
             "utils.py",
@@ -378,3 +375,48 @@ class TestTechDetector:
         data = result.data
         assert "has_tests" in data
         assert data["has_tests"] is True
+
+    def test_has_tests_false_when_no_test_markers(self, detector: TechDetector) -> None:
+        """Test has_tests is False when no test directory/file markers exist."""
+        files = [
+            "main.py",
+            "utils.py",
+            "models.py",
+        ]
+
+        result = detector.execute({"files": files})
+
+        data = result.data
+        assert data["has_tests"] is False
+
+    def test_has_tests_ignores_similar_filenames(self, detector: TechDetector) -> None:
+        """Test filenames that merely contain "test" aren't false positives."""
+        files = [
+            "latest.py",
+            "contest.js",
+            "attestation.py",
+        ]
+
+        result = detector.execute({"files": files})
+
+        data = result.data
+        assert data["has_tests"] is False
+
+    def test_has_tests_case_insensitive(self, detector: TechDetector) -> None:
+        """Test has_tests detection is case-insensitive."""
+        files = [
+            "Main.py",
+            "TESTS/Test_Main.PY",
+        ]
+
+        result = detector.execute({"files": files})
+
+        data = result.data
+        assert data["has_tests"] is True
+
+    def test_has_tests_empty_file_list(self, detector: TechDetector) -> None:
+        """Test has_tests is False (not missing) on the empty-files early return."""
+        result = detector.execute({"files": []})
+
+        data = result.data
+        assert data["has_tests"] is False
