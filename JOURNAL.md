@@ -43,3 +43,33 @@ Added a test in `tests/unit/test_tech_detector.py` calling `TechDetector.execute
 
 **Blockers or open questions:**
 While fixing lint issues to get the reproduction test committed, found two pre-existing, unrelated test failures in the same file (`test_node_modules_excluded`, `test_build_directory_excluded`) — `_should_skip_file` doesn't match root-level `node_modules/`/`build/` paths (only nested ones). Not touching it for #50, but flagging in case it interacts with test-file detection.
+
+## Week 9 — Solution building & PR submission
+
+### Check-in 1 (mid-week)
+
+**Current progress:**
+All 4 sub-tasks from PLAN.md are done: added `_detect_has_tests` to `TechDetector` (checks for a `tests/`/`test/` dir segment, `pytest.ini`, or `test_*.py`), wired it into `_detect_tech()` and the empty-files early return, confirmed the reproduction test now passes, and added 4 more tests (negative case, false-positive avoidance, case-insensitivity, empty-file-list).
+
+**Next steps:**
+Open the PR against upstream and do a final pass against CONTRIBUTING.md conventions. Still need to decide the open question from PLAN.md — whether to match JS/TS test conventions (`__tests__/`, `spec/`) or stay strictly to the issue's stated Python markers — before or shortly after submitting.
+
+**Blockers:**
+None specific to #50. Worth noting: `make check` and `make test-unit` both fail on plain `main` (173 lint/type errors, 53 unit test failures across unrelated modules) — pre-existing repo debt, not something introduced by this branch. Confirmed via a baseline diff that my branch adds 0 new failures.
+
+---
+
+### Check-in 2 (end of week)
+
+**PR link:** _pending — not yet opened. Open via https://github.com/Kunalkrk/pathreview/pull/new/feat/50-has-tests-boolean and paste the link here._
+
+**Branch:** feat/50-has-tests-boolean
+
+**What you built:**
+Added a `has_tests` boolean to `TechDetector`'s output, detected by scanning the already vendor/build-filtered file list for a `tests/`/`test/` directory segment, a `pytest.ini` file, or a `test_*.py` filename (case-insensitive, with false-positive guards against names like `latest.py`).
+
+**Tests added or updated:**
+`tests/unit/test_tech_detector.py` — `test_has_tests_detection` (positive case), `test_has_tests_false_when_no_test_markers`, `test_has_tests_ignores_similar_filenames`, `test_has_tests_case_insensitive`, `test_has_tests_empty_file_list`.
+
+**Self-review confirmation:** [x] make check passes  [x] make test-unit passes
+_(scoped to the files this branch touches — `agent/tools/tech_detector.py` and its test file; repo-wide `make check`/`make test-unit` still fail on plain `main` due to pre-existing, unrelated issues — see Blockers above.)_
