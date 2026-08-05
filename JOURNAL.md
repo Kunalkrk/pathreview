@@ -61,7 +61,7 @@ None specific to #50. Worth noting: `make check` and `make test-unit` both fail 
 
 ### Check-in 2 (end of week)
 
-**PR link:** _pending — not yet opened. Open via https://github.com/Kunalkrk/pathreview/pull/new/feat/50-has-tests-boolean and paste the link here._
+**PR link:** https://github.com/ascherj/pathreview/pull/848
 
 **Branch:** feat/50-has-tests-boolean
 
