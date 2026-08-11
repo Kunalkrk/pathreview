@@ -73,3 +73,22 @@ Added a `has_tests` boolean to `TechDetector`'s output, detected by scanning the
 
 **Self-review confirmation:** [x] make check passes  [x] make test-unit passes
 _(scoped to the files this branch touches — `agent/tools/tech_detector.py` and its test file; repo-wide `make check`/`make test-unit` still fail on plain `main` due to pre-existing, unrelated issues — see Blockers above.)_
+
+## Week 10 — Iteration & reflection
+
+### Reflection
+
+**What was harder than you expected?**
+Getting the environment running at all. Virtualization was disabled at the BIOS level, which cascaded into WSL2 having zero installed distros and Docker Desktop refusing to start — none of it was a code problem, just infrastructure I had to work through before writing a single line. Separately, the issue itself wasn't as trustworthy as I expected: it pointed at `agent/tools/repo_analyzer.py`, which doesn't exist. There's a same-named file in a completely different pipeline (`ingestion/parsers/repo_analyzer.py`) that already has its own unrelated `has_tests`. Figuring out that the issue's stated file was stale, and that `tech_detector.py` was the real target, took more digging than I expected for a "tier 1" issue.
+
+**What did you learn about working in a large codebase?**
+Issue descriptions and labels aren't ground truth — they can go stale after refactors, so I had to verify claims against the actual code rather than start implementing against the issue text at face value. I also learned that a small, well-scoped PR still needs to prove a negative: I only found out how much pre-existing debt already lived on `main` (173 lint/type errors, 53 failing unit tests, none related to my change) when I ran the full suite, and had to diff against `main` directly to show my branch introduced zero new failures. That's not a check you'd ever think to do on a personal greenfield project.
+
+**How did AI tools help — and where did they fall short?**
+AI was most useful for fast investigation: tracing the real location of `has_tests` logic across two same-named files, checking whether `TechDetector` was actually wired into the live review pipeline (it isn't — `_run_agent_orchestration` is a hardcoded placeholder), and running the full test/lint suite against both branches to prove no regressions. It also matched existing conventions well once shown the pattern — the new test cases and the `_detect_has_tests` method mirror the file's existing style closely. Where it fell short was scope judgment: deciding what *not* to fix (the two pre-existing `tech_detector` bugs, the 53 unrelated failing tests) was a call only I could make about the issue's actual boundaries. I also had to push back more than once when a first draft was more than I'd asked for — deciding what actually belonged in a deliverable was on me, not the tool.
+
+**What would you do differently if you started over?**
+I'd open the issue's referenced files before trusting them, rather than after — that would've caught the phantom `repo_analyzer.py` path immediately instead of partway through investigation. I'd also run a full `make check`/`make test-unit` baseline against `main` back in Week 7, so the scale of pre-existing debt was known going in rather than discovered while trying to commit.
+
+**What are you most proud of from this module?**
+Catching the stale issue reference and the two-files-with-the-same-name mixup, and actually confirming with evidence (reading both files, tracing the orchestrator) which one was real — instead of just coding against what the issue said and finding out later.
